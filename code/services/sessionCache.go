@@ -31,6 +31,7 @@ const (
 const (
 	ModePicCreate SessionMode = "pic_create"
 	ModePicVary   SessionMode = "pic_vary"
+	ModeSheets    SessionMode = "sheets"
 	ModeGPT       SessionMode = "gpt"
 )
 

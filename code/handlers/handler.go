@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"start-feishubot/initialization"
 	"start-feishubot/services"
+	larksheets "start-feishubot/services/larksheets/v2"
 	"start-feishubot/services/openai"
 	"strings"
 
@@ -29,6 +30,7 @@ type MessageHandler struct {
 	msgCache     services.MsgCacheInterface
 	gpt          *openai.ChatGPT
 	config       initialization.Config
+	sheets       *larksheets.SheetsService
 }
 
 func (m MessageHandler) cardHandler(_ context.Context,
@@ -205,6 +207,7 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 		&ClearAction{},           //清除消息处理
 		&HelpAction{},            //帮助处理
 		&RolePlayAction{},        //角色扮演处理
+		&SpreadsheetAction{},     //表格处理
 		&MessageAction{},         //消息处理
 
 	}
@@ -214,13 +217,14 @@ func (m MessageHandler) msgReceivedHandler(ctx context.Context, event *larkim.P2
 
 var _ MessageHandlerInterface = (*MessageHandler)(nil)
 
-func NewMessageHandler(gpt *openai.ChatGPT,
+func NewMessageHandler(gpt *openai.ChatGPT, sheets *larksheets.SheetsService,
 	config initialization.Config) MessageHandlerInterface {
 	return &MessageHandler{
 		sessionCache: services.GetSessionCache(),
 		msgCache:     services.GetMsgCache(),
 		gpt:          gpt,
 		config:       config,
+		sheets:       sheets,
 	}
 }
 

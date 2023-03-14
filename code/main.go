@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 	larkim "github.com/larksuite/oapi-sdk-go/v3/service/im/v1"
 	"log"
 	"start-feishubot/handlers"
 	"start-feishubot/initialization"
+	larksheets "start-feishubot/services/larksheets/v2"
 	"start-feishubot/services/openai"
-
-	larkcard "github.com/larksuite/oapi-sdk-go/v3/card"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/pflag"
@@ -27,7 +27,9 @@ func main() {
 	config := initialization.LoadConfig(*cfg)
 	initialization.LoadLarkClient(*config)
 	gpt := openai.NewChatGPT(*config)
-	handlers.InitHandlers(gpt, *config)
+	sheets := larksheets.NewService(*config)
+
+	handlers.InitHandlers(gpt, sheets, *config)
 
 	eventHandler := dispatcher.NewEventDispatcher(
 		config.FeishuAppVerificationToken, config.FeishuAppEncryptKey).
